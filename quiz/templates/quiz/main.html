@@ -1,0 +1,17 @@
+{% load quiz_filters%}
+<form action="{% url 'quiz:submit' quiz.id %}" method = "post">
+{%csrf_token%}
+{% for question in questions %}
+
+    <p> {{question.title}} </p>
+    <fieldset>
+    {% for answers in question.answer_set.all %}
+        <input type  = "radio" name = "{{question.title}}" required Value = "{{filtered_set|get_item:answers.title}}"/>
+        <label for = "{{question.title}}"><img src ="{{answers.image.url}}"/></label> 
+    {% endfor %}
+    </fieldset>
+    </p>
+{% endfor %}
+    
+<input type = "submit" value = "Submit"/>
+</form>      
