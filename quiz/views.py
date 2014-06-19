@@ -11,6 +11,8 @@ import itertools
 
 # Create your views here.
 
+#Checks If submited
+
 def main(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = Question.objects.filter(quiz__id = quiz_id)
@@ -35,8 +37,7 @@ def submit(request,quiz_id):
         result.votes = 0
         result.save()
         
-        
-    print request.POST
+    
     for question in questions:
         #values = request.POST[answers.title]
         ans = Answer.objects.get(pk=request.POST[question.title])
@@ -47,9 +48,11 @@ def submit(request,quiz_id):
                 result.votes = value.value
                 result.save()
             
-                
-    return HttpResponseRedirect(reverse('quiz:result', args =(quiz.id,)))
+    t = loader.get_template('quiz/main.html')
+    c = RequestContext(request, {'submitted':True})
     
+    return HttpResponseRedirect(reverse('quiz:result', args =(quiz.id,)))
+    #return HttpResponseRedirect(reverse('quiz:main', args =(quiz.id,)),t.render(c))
 
 def result(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -68,5 +71,3 @@ def result(request, quiz_id):
     #        secondary_results.append(result)
             
     return render(request, 'quiz/result.html', {'best_result':best_result,}) #'second_results': secondary_results})
-    
-

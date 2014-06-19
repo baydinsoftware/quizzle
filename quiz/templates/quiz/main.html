@@ -18,12 +18,12 @@
         <br>
         {% endif %}
         
-        {# number|divisibleby:forloop.counter#}
+        {# number|divisibleby:forloop.counter #}
         {% endwith %}
         <label class ="imgradio" for = "{{answers.id}}">
             <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/>
             <img src ="{{answers.image.url}}" height = 150 width = 150 />
-        </label> 
+        </label>
     {% endfor %}
     </div>
 {% endfor %}
