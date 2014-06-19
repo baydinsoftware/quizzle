@@ -3,6 +3,7 @@ from django.db import models
 class Quiz(models.Model):
     title = models.CharField(max_length = 200)
     description = models.TextField()
+    #submitted = models.BooleanField()
 #    url = models.URLField(max_length = 200)
     def __unicode__(self):
         return self.title
@@ -25,6 +26,7 @@ class Answer(models.Model):
     
 class Result(models.Model):
     quiz = models.ForeignKey(Quiz)
+    image = models.ImageField(upload_to='results_images')
     
     name = models.CharField(max_length = 200) #use for url
     description = models.TextField()
@@ -41,6 +43,10 @@ class Value(models.Model):
     value = models.IntegerField()
     def __unicode__(self):
         return str(self.result) +''+ str(self.value)
-    
+        
+class AsSecondResult(models.Model):
+    result = models.OneToOneField(Result)
+    description = models.TextField()
+        
 # from quiz.models import Quiz, Question, Answer, Result, Value
     

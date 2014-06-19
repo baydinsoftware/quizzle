@@ -1,17 +1,33 @@
-{% load quiz_filters%}
+{% load quiz_filters %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
+
+<body>
 <form action="{% url 'quiz:submit' quiz.id %}" method = "post">
 {%csrf_token%}
 {% for question in questions %}
-
+    <div>
     <p> {{question.title}} </p>
-    <fieldset>
     {% for answers in question.answer_set.all %}
-        <input type  = "radio" name = "{{question.title}}" required Value = "{{filtered_set|get_item:answers.title}}"/>
-        <label for = "{{question.title}}"><img src ="{{answers.image.url}}"/></label> 
+        {% with number_ans|get_item:question.title as number %}
+        
+        {# if number|divisibleby:forloop.counter and forloop.counter != 1  #}
+        {% if number = 4 and forloop.counter = 3 %}
+        <br>
+        {% elif number = 6 and forloop.counter = 4 %}
+        <br>
+        {% endif %}
+        
+        {# number|divisibleby:forloop.counter#}
+        {% endwith %}
+        <label class ="imgradio" for = "{{answers.id}}">
+            <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/>
+            <img src ="{{answers.image.url}}" height = 150 width = 150 />
+        </label> 
     {% endfor %}
-    </fieldset>
-    </p>
+    </div>
 {% endfor %}
     
 <input type = "submit" value = "Submit"/>
-</form>      
+</form>   
+</body>

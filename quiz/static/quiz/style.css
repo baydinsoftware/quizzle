@@ -1,0 +1,24 @@
+.imgradio > input[type=radio]{
+    display:none;
+}
+
+input[type=radio] + img{
+    cursor:pointer;
+    /*border:2px solid transport;*/
+    margin-right:25px;
+    margin-bottom:35px;
+    margin-left:25px;
+    margin-top:35px;
+    position: static;
+    border: 8px solid transparent; 
+}
+
+input[type=radio]:hover + img{
+    border:8px solid rgba(155,154,155,0.20);
+    border-radius: 3px;
+}
+    
+input[type=radio]:checked + img{
+    border:8px solid rgba(80,226,193,0.30);
+    border-radius: 3px;
+}

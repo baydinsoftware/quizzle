@@ -12,6 +12,10 @@ class QuestionsInline(admin.TabularInline):
     model = Question
     extra = 1
     
+class AnswersInline(admin.TabularInline):
+    model = Answer
+    extra = 1
+    
 class ResultsInline(admin.TabularInline):
     model = Result
     extra = 1
@@ -19,12 +23,16 @@ class ResultsInline(admin.TabularInline):
 
 #models   
 class QuizAdmin(admin.ModelAdmin):
-    inlines = (QuestionsInline,ResultsInline,)
+    inlines = (QuestionsInline,ResultsInline)
 
+class QuestionAdmin(admin.ModelAdmin):
+    inlines = (AnswersInline,)
+    
 class AnswerAdmin(admin.ModelAdmin):
     inlines = (ValueInline,)
     
 # Register your models here.
 admin.site.register(Quiz, QuizAdmin)
 admin.site.register(Answer, AnswerAdmin)
+admin.site.register(Question, QuestionAdmin)
 
