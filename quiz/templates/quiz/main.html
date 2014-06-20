@@ -1,9 +1,39 @@
 {% load quiz_filters %}
 {% load staticfiles %}
+<!DOCTYPE html>
+<html>
 <link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
 
+
+{% if submitted %}
+<head>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+$("document").ready(function() {
+    setTimeout(function() {
+        $("#myModal")[0].click();
+    },10);
+});
+</script>
+
+</head>
+<a id = "myModal" href="#openModal">Open Modal</a>
+
+<div id="openModal" class="modalDialog">
+	<div>
+		<a href="#close" title="Close" class="close">X</a>
+		<h2>Modal Box</h2>
+		<p>This is a sample modal box that can be created using the powers of CSS3.</p>
+		<p>You could do a lot of things here like have a pop-up ad that shows when your website loads, or create a login/register form for users.</p>
+	</div>
+</div>
+{% endif %}
+
+
+
 <body>
-<form action="{% url 'quiz:submit' quiz.id %}" method = "post">
+{#<form action="{% url 'quiz:main' quiz.id %}" method = "post">#}
+<form method = "GET">
 {%csrf_token%}
 {% for question in questions %}
     <div>
@@ -29,5 +59,14 @@
 {% endfor %}
     
 <input type = "submit" value = "Submit"/>
-</form>   
+</form> 
+
+
+
+{% if submitted %}
+
+
+
+{% endif %}
 </body>
+</html>
