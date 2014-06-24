@@ -2,71 +2,83 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html>
+
+<head>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
 <link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
 
-
 {% if submitted %}
-<head>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script>
-$("document").ready(function() {
-    setTimeout(function() {
-        $("#myModal")[0].click();
-    },10);
+$(document).ready(function(){
+$( "#modal" ).dialog({
+    width: 600,
+    modal: true,
+    draggable: false,
+    resizable: false,
+    });
 });
+
 </script>
+<script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+{% endif %} </head><body> {%if submitted %}
 
-</head>
-<a id = "myModal" href="#openModal">Open Modal</a>
 
-<div id="openModal" class="modalDialog">
-	<div>
-		<a href="#close" title="Close" class="close">X</a>
-		<h2>Modal Box</h2>
-		<p>This is a sample modal box that can be created using the powers of CSS3.</p>
-		<p>You could do a lot of things here like have a pop-up ad that shows when your website loads, or create a login/register form for users.</p>
+<div id="modal">
+    <h3> You're a... </h3>
+    
+    <img id = "result_img" src ="{{best_result.image.url}}" width = 500 height = 200 />
+    
+    <h2 id = "result_name"> {{best_result.name}}</h2>
+    
+    <div id = "modal_content">
+    <p><strong>Share: </strong><span class='st__large' displayText=''></span>
+<span class='st_facebook_large' displayText='Facebook'></span>
+<span class='st_twitter_large' displayText='Tweet'></span>
+<span class='st_googleplus_large' displayText='Google +'></span>
+<span class='st_linkedin_large' displayText='LinkedIn'></span>
+<span class='st_pinterest_large' displayText='Pinterest'></span>
+<span class='st_email_large' displayText='Email'></span>
+</p>
+	<p><strong>Your spirit animal is the... {{best_result.name}}</strong><p>
+	<p>{{best_result.description}}</p>
+	<p><strong>Transformation:</strong><p>
+	<p>{{best_result.second_description}}</p>
 	</div>
 </div>
+
 {% endif %}
 
-
-
-<body>
-{#<form action="{% url 'quiz:main' quiz.id %}" method = "post">#}
-<form method = "GET">
-{%csrf_token%}
-{% for question in questions %}
-    <div>
-    <p> {{question.title}} </p>
-    {% for answers in question.answer_set.all %}
-        {% with number_ans|get_item:question.title as number %}
+<div id ="quiz_form">
+    <form method = "GET">
+        {%csrf_token%}
+        {% for question in questions %}
+            <div>
+            <p> {{question.title}} </p>
+            {% for answers in question.answer_set.all %}
+                {% with number_ans|get_item:question.title as number %}
+                  
+                {% if number = 4 and forloop.counter = 3 %}
+                <br>
+                {% elif number = 6 and forloop.counter = 4 %}
+                <br>
+                {% endif %}
         
-        {# if number|divisibleby:forloop.counter and forloop.counter != 1  #}
-        {% if number = 4 and forloop.counter = 3 %}
-        <br>
-        {% elif number = 6 and forloop.counter = 4 %}
-        <br>
-        {% endif %}
-        
-        {# number|divisibleby:forloop.counter #}
-        {% endwith %}
-        <label class ="imgradio" for = "{{answers.id}}">
-            <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/>
-            <img src ="{{answers.image.url}}" height = 150 width = 150 />
-        </label>
-    {% endfor %}
-    </div>
-{% endfor %}
+                <!--{# number|divisibleby:forloop.counter #}-->
+                {% endwith %}
+                <label class ="imgradio" for = "{{answers.id}}">
+                    <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/>
+                    <img src ="{{answers.image.url}}" height = 150 width = 150 />
+                </label>
+            {% endfor %}
+            </div>
+        {% endfor %}
     
-<input type = "submit" value = "Submit"/>
-</form> 
-
-
-
-{% if submitted %}
-
-
-
-{% endif %}
+        <input type = "submit" value = "Submit" class="button" id="submit_btn" />
+    </form> 
+</div>
 </body>
 </html>

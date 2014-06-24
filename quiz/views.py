@@ -11,7 +11,7 @@ import itertools
 
 # Create your views here.
 
-#Checks If submited
+
 
 def main(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
@@ -20,7 +20,7 @@ def main(request, quiz_id):
     print request.GET.get(requestTestQ.title)
     print requestTestQ
     
-    #change if statement if doesn't work
+    
     if request.GET.get(requestTestQ.title):
         
         results = Result.objects.filter(quiz__id = quiz_id)
@@ -90,15 +90,15 @@ def submit(request,quiz_id):
         result.save()
         
     
-    for question in questions:
+    #for question in questions:
         #values = request.POST[answers.title]
-        ans = Answer.objects.get(pk=request.POST[question.title])
-        if ans != None:
-            val = Value.objects.filter(answer__title = ans.title)
-            for value in val:
-                result = value.result
-                result.votes = value.value
-                result.save()
+     #   ans = Answer.objects.get(pk=request.POST[question.title])
+      #  if ans != None:
+       #     val = Value.objects.filter(answer__title = ans.title)
+        #    for value in val:
+         #       result = value.result
+          #      result.votes = value.value
+           #     result.save()
             
     t = loader.get_template('quiz/main.html')
     c = RequestContext(request, )
