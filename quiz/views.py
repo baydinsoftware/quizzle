@@ -16,9 +16,8 @@ import itertools
 def main(request, quiz_id):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = Question.objects.filter(quiz__id = quiz_id)
-    requestTestQ = Question.objects.get(pk = 1)
-    print request.GET.get(requestTestQ.title)
-    print requestTestQ
+    requestTestQ = questions[0]
+    
     
     
     if request.GET.get(requestTestQ.title):
@@ -38,11 +37,12 @@ def main(request, quiz_id):
             ans = Answer.objects.get(pk=request.GET[question.title])
             if ans != None:
                 #finds the values associated with that answer
-                val = Value.objects.filter(answer__title = ans.title)       
+                val = Value.objects.filter(answer__title = ans.title)      
+                
                 #contributes the values to each result
                 for value in val:
                     result = value.result
-                    result.votes = value.value
+                    result.votes += value.value
                     result.save()
         
         ###processing results to find best
@@ -74,7 +74,7 @@ def main(request, quiz_id):
         best_result = None
         submitted = False
         
-    print submitted
+    
     return render(request, 'quiz/main.html', {'questions':questions,'number_ans':number_ans,
     'quiz':quiz,'best_result':best_result,'submitted':submitted})
     

@@ -44,9 +44,11 @@ class Value(models.Model):
     def __unicode__(self):
         return str(self.result) +''+ str(self.value)
         
-class AsSecondResult(models.Model):
-    result = models.OneToOneField(Result)
+class SecondResult(models.Model):
+    result = models.ForeignKey(Result)
+    name = models.CharField(max_length = 200)
     description = models.TextField()
+    
         
 # from quiz.models import Quiz, Question, Answer, Result, Value
     

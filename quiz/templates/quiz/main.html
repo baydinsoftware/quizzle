@@ -13,51 +13,88 @@
 <script>
 $(document).ready(function(){
 $( "#modal" ).dialog({
+    title: "Your a...",
     width: 600,
     modal: true,
     draggable: false,
     resizable: false,
     });
 });
-
 </script>
-<script type="text/javascript">var switchTo5x=true;</script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
-{% endif %} </head><body> {%if submitted %}
+{% endif %}
 
+<!-- Facebook -->
+<meta property="og:title" content="{{best_result.name}}" />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="{{best_result.image.url}}" />
+<meta property="og:url" content="http://localhost:8000/quiz/1/" />
+<meta property="og:description" content="{{best_result.description}}" />
+
+<!-- Twitter meta tags -->
+<meta name="twitter:card" content="summary_large_image">
+<!-- <meta name="twitter:site" content="@nytimes">
+<meta name="twitter:creator" content="@SarahMaslinNir"> -->
+<meta name="twitter:title" content="I'm a {{best_result.name}}">
+<meta name="twitter:description" content="{{best_result.description}}">
+<meta name="twitter:image:src" content="{{best_result.image.url}}">
+
+
+<!-- <script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script> -->
+
+
+</head>
+<body> 
+
+{%if submitted %}
+<!-- for facbook sharing -->
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<!-- twitter sharing -->
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 <div id="modal">
-    <h3> You're a... </h3>
-    
     <img id = "result_img" src ="{{best_result.image.url}}" width = 500 height = 200 />
     
     <h2 id = "result_name"> {{best_result.name}}</h2>
     
     <div id = "modal_content">
-    <p><strong>Share: </strong><span class='st__large' displayText=''></span>
-<span class='st_facebook_large' displayText='Facebook'></span>
-<span class='st_twitter_large' displayText='Tweet'></span>
-<span class='st_googleplus_large' displayText='Google +'></span>
-<span class='st_linkedin_large' displayText='LinkedIn'></span>
-<span class='st_pinterest_large' displayText='Pinterest'></span>
-<span class='st_email_large' displayText='Email'></span>
-</p>
+    <strong>Share:</strong>
+    <span class='st__large' displayText=''></span>
+    <span> 
+
+<div class="fb-share-button" data-href="http://localhost:8000/quiz/1/" data-type="icon"></div>
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a>
+
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</span>
+
+    
 	<p><strong>Your spirit animal is the... {{best_result.name}}</strong><p>
-	<p>{{best_result.description}}</p>
+	<p>{{best_result.description|safe}}</p>
 	<p><strong>Transformation:</strong><p>
-	<p>{{best_result.second_description}}</p>
+	<p>{{best_result.second_description|safe}}</p>
 	</div>
 </div>
 
 {% endif %}
 
-<div id ="quiz_form">
+<div class ="quiz_form">
     <form method = "GET">
         {%csrf_token%}
         {% for question in questions %}
             <div>
-            <p> {{question.title}} </p>
+            <p class = "questions"> {{forloop.counter}}. {{question.title}} </p>
             {% for answers in question.answer_set.all %}
                 {% with number_ans|get_item:question.title as number %}
                   
@@ -68,16 +105,17 @@ $( "#modal" ).dialog({
                 {% endif %}
         
                 <!--{# number|divisibleby:forloop.counter #}-->
-                {% endwith %}
+                
                 <label class ="imgradio" for = "{{answers.id}}">
-                    <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/>
-                    <img src ="{{answers.image.url}}" height = 150 width = 150 />
+                    <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/></span>
+                    <img class = "img{{number}}" src ="{{answers.image.url}}" />
                 </label>
+                {% endwith %}
             {% endfor %}
             </div>
         {% endfor %}
     
-        <input type = "submit" value = "Submit" class="button" id="submit_btn" />
+        <input type = "submit" value = "Submit" class="btn" id="submit_btn" />
     </form> 
 </div>
 </body>
