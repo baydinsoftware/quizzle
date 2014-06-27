@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
-from quiz.models import Quiz,Answer,Question,Result,Value
+from quiz.models import Quiz,Answer,Question,Result,Value,SecondResult
 from django.views import generic
 from django.utils import timezone
 from django.forms import ModelForm
@@ -63,6 +63,8 @@ def main(request, quiz_id):
             number_ans[question.title] = 0
             for answers in question.answer_set.all():
                 number_ans[question.title] += 1
+                
+        second_results = SecondResult.objects.filter(result = best_result)
         
     else:
         #otherwise we just display the form
@@ -73,10 +75,12 @@ def main(request, quiz_id):
                 number_ans[question.title] += 1
         best_result = None
         submitted = False
+        second_results = None
         
     
     return render(request, 'quiz/main.html', {'questions':questions,'number_ans':number_ans,
-    'quiz':quiz,'best_result':best_result,'submitted':submitted})
+    'quiz':quiz,'best_result':best_result,
+    'submitted':submitted,'second_results':second_results})
     
     
 def submit(request,quiz_id):

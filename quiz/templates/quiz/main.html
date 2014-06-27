@@ -84,6 +84,10 @@ $( "#modal" ).dialog({
 	<p>{{best_result.description|safe}}</p>
 	<p><strong>Transformation:</strong><p>
 	<p>{{best_result.second_description|safe}}</p>
+	<p><strong>May have traits of...</strong><p>
+	{% for result in second_results %}
+	<p><strong>{{result.name}}:</strong> {{result.description|safe}}</p>
+	{% endfor %}
 	</div>
 </div>
 
