@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.conf import settings
 
+
 from django.contrib import admin
 admin.autodiscover()
 
@@ -9,10 +10,12 @@ urlpatterns = patterns('',
     # url(r'^$', 'quizzle.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
 
-    url(r'quiz/', include('quiz.urls', namespace='quiz')),
+    url(r'spirit/', include('quiz.urls', namespace='quiz')),
     url(r'^admin/', include(admin.site.urls)),
     (r'^media/(?P<path>.*)$', 'django.views.static.serve',
         {'document_root': settings.MEDIA_ROOT}),
+    
+    
 
 )
 

@@ -1,0 +1,168 @@
+{% load quiz_filters %}
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
+
+
+{% if submitted %}
+<script>
+$(document).ready(function(){
+$( "#modal" ).dialog({
+    title: "Your email spirit animal is a...",
+    width: 600,
+    modal: true,
+    draggable: false,
+    resizable: false,
+    
+    
+    });
+    
+});
+</script>
+{% endif %}
+
+
+
+<!-- Facebook/linkedin/g+ -->
+<meta property="og:title" content="I'm a {{best_result.name}}! What's your email spirit animal?"/>
+<meta property="og:type" content="website"/>
+<meta property="og:image" content="http://inboxquiz.com{{best_result.image.url}}"/>
+<meta property="og:description" content="{{best_result.description|striptags}}" />
+
+<!-- Twitter meta tags -->
+<meta name="twitter:card" content="summary_large_image">
+
+
+<meta name="twitter:image:src" content="http://inboxquiz.com{{best_result.image.url}}">
+<meta name="twitter:description" content="{{best_result.description}}">
+<meta name="twitter:title" content="I'm a {{best_result.name}}! What's your email spirit animal?"> 
+
+
+<!-- <script type="text/javascript">var switchTo5x=true;</script>
+<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script> -->
+
+
+</head>
+
+
+{%if submitted %}
+
+
+<!-- for facbook sharing -->
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div id="modal">
+    <img id = "result_img" src ="{{best_result.image.url}}" width = 500 height = 200 />
+    
+    <h2 id="result_name"> {{best_result.name}}!</h2>
+    
+    <div id="modal_content">
+    <span class="sharing">
+    <strong class="share">Share:</strong>
+    
+    <!-- Go to www.addthis.com/dashboard to customize your tools -->
+ 
+
+<span class="fb-share-button" data-type="button"></span>
+
+<span class="tw-share-button"><a href="https://twitter.com/share" class="twitter-share-button" data-count="none">Tweet</a></span>
+<!-- twitter sharing -->
+
+    <script>window.twttr = (function (d, s, id) {
+
+      var t, js, fjs = d.getElementsByTagName(s)[0];
+
+      if (d.getElementById(id)) return;
+
+      js = d.createElement(s); js.id = id; js.src= "https://platform.twitter.com/widgets.js";
+
+      fjs.parentNode.insertBefore(js, fjs);
+
+      return window.twttr || (t = { _e: [], ready: function (f) { t._e.push(f) } });
+
+    }(document, "script", "twitter-wjs"));</script>
+
+<!-- linkedIn -->
+<script src="//platform.linkedin.com/in.js" type="text/javascript">
+  lang: en_US
+</script>
+<script type="IN/Share"></script>
+
+<!-- google + -->
+<div class="g-plus" data-action="share" data-annotation="none"></div>
+
+<!-- Place this tag after the last share tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+
+
+</span>
+
+    
+	<p><strong>Your spirit animal is the... {{best_result.name}}</strong><p>
+	<p>{{best_result.description|safe}}</p>
+	<p><strong>Transformation:</strong><p>
+	<p>{{best_result.second_description|safe}}</p>
+	<p><strong>May have traits of...</strong><p>
+	{% for result in second_results %}
+	<p><strong>{{result.name}}:</strong> {{result.description|safe}}</p>
+	{% endfor %}
+	</div>
+</div>
+
+{% endif %}
+
+<div class ="quiz_form">
+    <form method = "GET">
+        {%csrf_token%}
+        <img src="../media/whatis.png" class="titleImage">
+        
+        {% for question in questions %}
+            <div>
+            <p class = "questions"> {{forloop.counter}}. {{question.title}} </p>
+            {% for answers in question.answer_set.all %}
+                {% with number_ans|get_item:question.title as number %}
+                  
+                {% if number = 4 and forloop.counter = 3 %}
+                <br>
+                {% elif number = 6 and forloop.counter = 4 %}
+                <br>
+                {% endif %}
+        
+                <!--{# number|divisibleby:forloop.counter #}-->
+                
+                <label class ="imgradio" for = "{{answers.id}}">
+                    <input type  = "radio" name = "{{question.title}}" id = "{{answers.id}}"  value = "{{answers.id}}" required/></span>
+                    <img class = "img{{number}}" src ="{{answers.image.url}}" />
+                </label>
+                {% endwith %}
+            {% endfor %}
+            </div>
+        {% endfor %}
+    
+        <input type = "submit" value = "Submit" class="btn" id="submit_btn" />
+    </form> 
+</div>
+</body>
+</html>

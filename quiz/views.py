@@ -7,19 +7,19 @@ from django.views import generic
 from django.utils import timezone
 from django.forms import ModelForm
 from django import forms
+from django.conf.urls import patterns, url
 import itertools
+import pdb
 
 # Create your views here.
 
 
 
-def main(request, quiz_id):
+def main(request, quiz_id=1):
     quiz = get_object_or_404(Quiz, pk=quiz_id)
     questions = Question.objects.filter(quiz__id = quiz_id)
     requestTestQ = questions[0]
-    
-    
-    
+     
     if request.GET.get(requestTestQ.title):
         
         results = Result.objects.filter(quiz__id = quiz_id)
@@ -57,7 +57,6 @@ def main(request, quiz_id):
                 best_result = result
                 
         submitted = True
-        print best_result
         number_ans = {}
         for question in questions:
             number_ans[question.title] = 0
@@ -84,46 +83,66 @@ def main(request, quiz_id):
     
     
 def submit(request,quiz_id):
+    
     quiz = get_object_or_404(Quiz, pk=quiz_id)
+    quiz_results = Result.objects.filter(quiz__id = quiz_id)
     questions = Question.objects.filter(quiz__id = quiz_id)
     results = Result.objects.filter(quiz__id = quiz_id)
+    best_result = quiz_results[0]
     resultsDict = {}
     
     for result in results:
         result.votes = 0
         result.save()
-        
-    
-    #for question in questions:
-        #values = request.POST[answers.title]
-     #   ans = Answer.objects.get(pk=request.POST[question.title])
-      #  if ans != None:
-       #     val = Value.objects.filter(answer__title = ans.title)
-        #    for value in val:
-         #       result = value.result
-          #      result.votes = value.value
-           #     result.save()
+       
+    for question in questions:
+            #values = request.POST[answers.title]
+            ##gets selected answer of question
+            ans = Answer.objects.get(pk=request.POST[question.title])
             
-    t = loader.get_template('quiz/main.html')
-    c = RequestContext(request, )
+            
+            print ans
+            if ans != None:
+                #finds the values associated with that answer
+                val = Value.objects.filter(answer__title = ans.title)      
+                
+                #contributes the values to each result
+                for value in val:
+                    result = value.result
+                    result.votes += value.value
+                    result.save()
+        
+    for result in quiz_results:
+            if result.votes > best_result.votes:
+                best_result = result
+                
+    resultId = best_result.id
+              
+    #t = loader.get_template('quiz/main.html')
+    #c = RequestContext(request, )
     
     #return HttpResponseRedirect(reverse('quiz:result', args =(quiz.id,)))
-    return HttpResponseRedirect(reverse('quiz:main', args =(quiz.id,)),t.render(c))
+    return HttpResponseRedirect('/spirit/result/'+ str(resultId))
 
-def result(request, quiz_id):
-    quiz = get_object_or_404(Quiz, pk=quiz_id)
-    quiz_results = Result.objects.filter(quiz__id = quiz_id)
-    best_result = quiz_results[0]
-    threshold = 9000
+def result(request,result_id):
+    ###processing results to find best
+        
+        
+        #gets the new results
+        #quiz_results = Result.objects.filter(quiz__id = quiz_id)
+        #questions = Question.objects.filter(quiz__id = quiz_id)
+        #best_result = quiz_results[0]
+        #threshold = 9000
     
-    for result in quiz_results:
-        if result.votes > best_result.votes:
-            best_result = result
-           
-    ### secondaries 
-    #secondary_results = []
-    #for result in quiz_results:
-    #    if result.votes > threshold:
-    #        secondary_results.append(result)
+        #for result in quiz_results:
+        #    if result.votes > best_result.votes:
+        #        best_result = result
+                
+        best_result = Result.objects.get(id = result_id)
+        second_results = SecondResult.objects.filter(result = best_result)
+    
             
-    return render(request, 'quiz/result.html', {'best_result':best_result,}) #'second_results': secondary_results})
+        return render(request, 'quiz/result.html', {'best_result':best_result,'second_results':second_results})
+    
+def twitter(request):
+    return render(request, 'quiz/testshare.html')

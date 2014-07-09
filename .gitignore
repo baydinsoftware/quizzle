@@ -48,3 +48,6 @@ media/
 *~
 settings.py
 migrations/
+quiz/static/quiz/images/
+static/admin
+static/quiz/images

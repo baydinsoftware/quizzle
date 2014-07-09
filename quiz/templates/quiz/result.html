@@ -1,26 +1,93 @@
-<head> <script type="text/javascript">var switchTo5x=true;</script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script> </head>
+{% load quiz_filters %}
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html>
+
+<head>
+
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
 
 
-<p>{{ best_result.name }}</p>
+<!-- Facebook/linkedin/g+ -->
+<meta property="og:title" content="I'm a {{best_result.name}}! What's your email spirit animal?">
+<meta property="og:type" content="website">
+<meta property="og:image" content="http://inboxquiz.com{{best_result.image.url}}">
+<meta property="og:description" content="{{best_result.description|striptags}}" >
 
-<p>{{best_result.description}}</p>
+<!-- Twitter meta tags -->
 
-{% for result in second_results %}
-    <p> {{result}} </p>
-{% endfor %}
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image:src" content="http://inboxquiz.com{{best_result.image.url}}"/>
+<meta name="twitter:description" content="{{best_result.description}}"/>
+<meta name="twitter:title" content="I'm a {{best_result.name}}! What's your email spirit animal?"/> 
+</head>
+<body>
+<!-- for facbook sharing -->
 
-<img src ="{{best_result.image.url}}"/>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
-<p>
-<span class='st_fblike_large' displayText='Facebook Like'></span>
-<span class='st_twitter_large' displayText='Tweet'></span>
-<span class='st_linkedin_large' displayText='LinkedIn'></span>
-<span class='st_googleplus_large' displayText='Google +'></span>
-<span class='st_facebook_large' displayText='Facebook'></span>
-<span class='st_email_large' displayText='Email'></span>
-<span class='st_tumblr_large' displayText='Tumblr'></span>
-<span class='st_pinterest_large' displayText='Pinterest'></span>
-<span class='st_reddit_large' displayText='Reddit'></span>
-</p>
+<!-- Place this tag after the last share tag. -->
+<script type="text/javascript">
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+ <!-- twitter sharing -->    
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+<div id="modal">
+
+    <p id ="title"><strong> Your email spirit animal is...</strong></p>
+
+    <img id = "result_img" src ="{{best_result.image.url}}" width = 500 height = 200 />
+    
+    <h2 id="result_name"> The {{best_result.name}}!</h2>
+    
+    <div id="modal_content">
+    
+        <strong class="share">Share:</strong>
+    
+        <span class="fb-share-button" data-type="button"></span>
+        
+        <span class="tw-share-button"><a href="encodeURI(https://twitter.com/intent/tweet?text=I'm a {{best_result.name}}! What's your spirit animal%3F" class="twitter-share-button" data-count="none">Tweet</a></span>
+
+        <!--<span class="tw-share-button"><a href="encodeURI(https://twitter.com/intent/tweet?text=I'm a {{best_result.name}}! What's your spirit animal%3F http://inboxquiz.com{{best_result.image.url}}" class="twitter-share-button" data-url="http://inboxquiz.com/spirit" data-count="none">Tweet</a></span>
+        -->
+        
+    
+        <!-- linkedIn -->
+        <script src="//platform.linkedin.com/in.js" type="text/javascript">
+        lang: en_US
+        </script>
+        <script type="IN/Share"></script>
+
+        <!-- google + -->
+        <div class="g-plus" data-action="share" data-annotation="none"></div>
+
+        <p style="font-size:18px"><strong>Your spirit animal is the {{best_result.name}}</strong><p>
+        <p>{{best_result.description|safe}}</p>
+        <p style="font-size:18px"><strong>Transformation:</strong><p>
+        <p>{{best_result.second_description|safe}}</p>
+        <p style="font-size:18px"><strong>May have traits of...</strong><p>
+        {% for result in second_results %}
+          <p><strong>{{result.name}}:</strong> {{result.description|safe}}</p>
+        {% endfor %}
+    </div>
+</div>
+
+
+</body>
+</html>

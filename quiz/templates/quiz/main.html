@@ -1,19 +1,22 @@
 {% load quiz_filters %}
 {% load staticfiles %}
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 
 <head>
+
+
 <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
 <script src="https://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
 <!-- <link rel="stylesheet" href="https://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css"> -->
 <link rel="stylesheet" type="text/css" href="{% static 'quiz/style.css' %}" />
 
+
 {% if submitted %}
 <script>
 $(document).ready(function(){
 $( "#modal" ).dialog({
-    title: "Your a...",
+    title: "Your email spirit animal is a...",
     width: 600,
     modal: true,
     draggable: false,
@@ -23,79 +26,54 @@ $( "#modal" ).dialog({
 </script>
 {% endif %}
 
-<!-- Facebook -->
-<meta property="og:title" content="{{best_result.name}}" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="{{best_result.image.url}}" />
-<meta property="og:url" content="http://localhost:8000/quiz/1/" />
-<meta property="og:description" content="{{best_result.description}}" />
-
-<!-- Twitter meta tags -->
-<meta name="twitter:card" content="summary_large_image">
-<!-- <meta name="twitter:site" content="@nytimes">
-<meta name="twitter:creator" content="@SarahMaslinNir"> -->
-<meta name="twitter:title" content="I'm a {{best_result.name}}">
-<meta name="twitter:description" content="{{best_result.description}}">
-<meta name="twitter:image:src" content="{{best_result.image.url}}">
-
-
-<!-- <script type="text/javascript">var switchTo5x=true;</script>
-<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-<script type="text/javascript">stLight.options({publisher: "1e5d4ceb-9377-4f1f-b55e-bdb65384cdf4", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script> -->
-
-
 </head>
-<body> 
+
 
 {%if submitted %}
-<!-- for facbook sharing -->
-
-<div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) return;
-  js = d.createElement(s); js.id = id;
-  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
-
-<!-- twitter sharing -->
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 <div id="modal">
     <img id = "result_img" src ="{{best_result.image.url}}" width = 500 height = 200 />
     
-    <h2 id = "result_name"> {{best_result.name}}</h2>
+    <h2 id="result_name"> {{best_result.name}}!</h2>
     
-    <div id = "modal_content">
-    <strong>Share:</strong>
-    <span class='st__large' displayText=''></span>
-    <span> 
-
-<div class="fb-share-button" data-href="http://localhost:8000/quiz/1/" data-type="icon"></div>
-
-<a href="https://twitter.com/share" class="twitter-share-button" data-size="large">Tweet</a>
-
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-</span>
-
+    <div id="modal_content">
     
-	<p><strong>Your spirit animal is the... {{best_result.name}}</strong><p>
-	<p>{{best_result.description|safe}}</p>
-	<p><strong>Transformation:</strong><p>
-	<p>{{best_result.second_description|safe}}</p>
-	<p><strong>May have traits of...</strong><p>
-	{% for result in second_results %}
-	<p><strong>{{result.name}}:</strong> {{result.description|safe}}</p>
-	{% endfor %}
-	</div>
+        <strong class="share">Share:</strong>
+    
+        <span class="fb-share-button" data-type="button"></span>
+
+        <span class="tw-share-button"><a href="encodeURI(https://twitter.com/intent/tweet?text=I'm a {{best_result.name}}! What's your spirit animal%3F http://inboxquiz.com{{best_result.image.url}}" class="twitter-share-button" data-url="http://inboxquiz.com/spirit" data-count="none">Tweet</a></span>
+        
+    
+        <!-- linkedIn -->
+        <script src="//platform.linkedin.com/in.js" type="text/javascript">
+        lang: en_US
+        </script>
+        <script type="IN/Share"></script>
+
+        <!-- google + -->
+        <div class="g-plus" data-action="share" data-annotation="none"></div>
+
+        <p style="font-size:18px"><strong>Your spirit animal is the {{best_result.name}}</strong><p>
+        <p>{{best_result.description|safe}}</p>
+        <p style="font-size:18px"><strong>Transformation:</strong><p>
+        <p>{{best_result.second_description|safe}}</p>
+        <p style="font-size:18px"><strong>May have traits of...</strong><p>
+        {% for result in second_results %}
+          <p><strong>{{result.name}}:</strong> {{result.description|safe}}</p>
+        {% endfor %}
+    </div>
 </div>
 
 {% endif %}
 
 <div class ="quiz_form">
-    <form method = "GET">
+    {% with id=quiz.id %}
+    <form action="submit/{{id}}" method = "post">
+    {% endwith %}
         {%csrf_token%}
+        <img src="../media/whatis.png" class="titleImage">
+        
         {% for question in questions %}
             <div>
             <p class = "questions"> {{forloop.counter}}. {{question.title}} </p>
@@ -122,5 +100,22 @@ $( "#modal" ).dialog({
         <input type = "submit" value = "Submit" class="btn" id="submit_btn" />
     </form> 
 </div>
+
+
+
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-8959903-16', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+
 </body>
 </html>
